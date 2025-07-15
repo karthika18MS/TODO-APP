@@ -4,18 +4,27 @@ import axios from 'axios'
 
 
 const ViewTodo = () => {
+
+    const [isLoad,changeLoad]=useState(true)
+
     const [todo, changetodo] = useState(
        {"todos":[],"total":254,"skip":0,"limit":30}
         
     )
 
 
-    const fetchData=()=>
+    const fetchData=()=>{
         axios.get("https://dummyjson.com/todos").then( 
             (response)=>{
+                changeLoad(false)
                 changetodo(response.data)
             }
-        ).catch()
+        ).catch(
+            (error)=>{
+                alert("Something went wrong"+error)
+            }
+        )
+    }
 
 
          useEffect(()=>{fetchData()},[])
@@ -34,7 +43,7 @@ const ViewTodo = () => {
 
                                 <table class="table">
                                     <thead>
-
+                                      
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">TODO</th>
@@ -44,7 +53,10 @@ const ViewTodo = () => {
 
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                      {isLoad ?(<div class="d-flex align-items-center">
+  <strong role="status">Loading...</strong>
+  <div class="spinner-border ms-auto" aria-hidden="true"></div>
+</div>) : (  <tbody>
                                         {todo.todos.map(
                                             (value, index) => {
                                                 return (
@@ -54,8 +66,10 @@ const ViewTodo = () => {
                                                         
                                                         <th>{value.id}</th>
                                                         <td>{value.todo}</td>
-                                                        <td>{value.completed?"true":"false"}</td>
-
+                                                        {/* <td>{value.completed?"true":"false"}</td> */}
+                                                        <td>{value.completed ?<p className='text-success'>Completed</p>:<p className='text'>Not Completed</p>}</td>
+                                                        {/* <td>{value.completed ?<p>Completed</p>:<p>Not Completed</p>}</td>
+  */}
                                                         <td>{value.userId}</td>
                                                       
                                                     </tr>
@@ -65,7 +79,9 @@ const ViewTodo = () => {
                                         )}
 
 
-                                    </tbody>
+                                    </tbody>)}
+
+                                  
                                 </table>
 
 
